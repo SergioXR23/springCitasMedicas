@@ -37,17 +37,25 @@ public class DiagnosticoService implements IDiagnosticoService {
             cita.setDiagnostico(diagnostico);
         }
         diagnostico = diagnosticoRepository.save(diagnostico);
+
         return diagnosticoMapper.diagnosticoToDiagnosticoDTO(diagnostico);
     }
 
+    @Transactional
     @Override
     public boolean deleteDiagnostico(Long id) {
-        if (diagnosticoRepository.existsById(id)) {
-            diagnosticoRepository.deleteById(id);
+        return diagnosticoRepository.findById(id).map(diagnostico -> {
+            Cita cita = diagnostico.getCita();
+            if (cita != null) {
+                cita.setDiagnostico(null); // Elimina la referencia al diagnóstico
+                citaRepository.save(cita); // Guarda la cita sin el diagnóstico
+            }
+            diagnosticoRepository.delete(diagnostico); // ahora SI SE PUEDE eliminar el diagnóstico
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
+
+
 
     @Transactional
     @Override
