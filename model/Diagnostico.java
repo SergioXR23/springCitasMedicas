@@ -19,6 +19,7 @@ public class Diagnostico {
 
     private String enfermedad;
 
-    @OneToOne(mappedBy = "diagnostico", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "diagnostico", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     private Cita cita;
 }

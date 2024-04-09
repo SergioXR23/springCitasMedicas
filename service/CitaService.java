@@ -37,24 +37,19 @@ public class CitaService implements ICitaService {
     public CitaDTO saveCita(CitaDTO citaDTO) {
         Cita cita = new Cita();
 
-        // Cargar el médico usando idMedico y asignarlo a la cita
         Medico medico = medicoRepository.findById(citaDTO.getIdMedico())
                 .orElseThrow(() -> new RuntimeException("Médico no encontrado con el ID: " + citaDTO.getIdMedico()));
         cita.setMedico(medico);
 
-        // Cargar el paciente usando idPaciente y asignarlo a la cita
         Paciente paciente = pacienteRepository.findById(citaDTO.getIdPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado con el ID: " + citaDTO.getIdPaciente()));
         cita.setPaciente(paciente);
 
-        // Configurar fechaHora y motivo directamente desde citaDTO
         cita.setFechaHora(citaDTO.getFechaHora());
         cita.setMotivoCita(citaDTO.getMotivoCita());
 
-        // Guardar la cita en la base de datos
         Cita savedCita = citaRepository.save(cita);
 
-        // Devolver el DTO de la cita guardada
         return citaMapper.citaToCitaDTO(savedCita);
     }
 

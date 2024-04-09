@@ -22,6 +22,7 @@ public class CitaDTO {
     private String motivoCita;
     @NotNull(message = "El paciente no puede ser nulo")
     private Long idPaciente;
+
     private Long idDiagnostico;
     @NotNull(message = "El médico no puede ser nulo")
     private Long idMedico;

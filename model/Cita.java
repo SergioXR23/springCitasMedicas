@@ -25,9 +25,8 @@ public class Cita {
 
     @Column(nullable = false)
     private String motivoCita;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "diagnostico_id", referencedColumnName = "id")
-    private Diagnostico diagnostico;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+     private Diagnostico diagnostico;
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
