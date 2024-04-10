@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     //todos los metodos CRUD ya estan implementados en JpaRepository
     Usuario findByUsuario(String usuario);
+    Usuario findByUsuarioAndClave(String usuario, String clave);
+
 }

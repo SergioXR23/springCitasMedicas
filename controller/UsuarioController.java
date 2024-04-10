@@ -50,4 +50,11 @@ public class UsuarioController {
         usuarioService.deleteUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioDTO> loginUsuario(@RequestParam String username, @RequestParam String password) {
+        UsuarioDTO usuarioDTO = usuarioService.login(username, password);
+        return ResponseEntity.ok(usuarioDTO);
+
+    }
 }

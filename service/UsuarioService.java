@@ -61,4 +61,14 @@ public class UsuarioService implements IUsuarioService {
         }
         usuarioRepository.deleteById(id);
     }
+
+    public UsuarioDTO login (String usuario, String contrasena) {
+         Usuario us =  usuarioRepository.findByUsuarioAndClave(usuario, contrasena);
+            if (0 == us.getId()) {
+                throw new RuntimeException("Usuario no encontrado");
+            }
+            return usuarioMapper.usuarioToUsuarioDTO(us);
+
+    }
+
 }
