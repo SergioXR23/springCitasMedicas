@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class MedicoService implements IMedicoService {
+public class MedicoServiceImpl implements IMedicoService {
     private final MedicoRepository medicoRepository;
 
     private final MedicoMapper medicoMapper;
 
-    public MedicoService(MedicoRepository medicoRepository, MedicoMapper medicoMapper) {
+    public MedicoServiceImpl(MedicoRepository medicoRepository, MedicoMapper medicoMapper) {
         this.medicoRepository = medicoRepository;
         this.medicoMapper = medicoMapper;
     }

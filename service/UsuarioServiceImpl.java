@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UsuarioService implements IUsuarioService {
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
     // Constructor con inyección de dependencias
-    public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
     }
