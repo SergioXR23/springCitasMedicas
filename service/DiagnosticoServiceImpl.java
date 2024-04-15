@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DiagnosticoService implements IDiagnosticoService {
+public class DiagnosticoServiceImpl implements IDiagnosticoService {
 
     private final DiagnosticoRepository diagnosticoRepository;
     private final DiagnosticoMapper diagnosticoMapper;
     CitaRepository citaRepository;
 
-    public DiagnosticoService(DiagnosticoRepository diagnosticoRepository, CitaRepository citaRepository, DiagnosticoMapper diagnosticoMapper) {
+    public DiagnosticoServiceImpl(DiagnosticoRepository diagnosticoRepository, CitaRepository citaRepository, DiagnosticoMapper diagnosticoMapper) {
         this.diagnosticoRepository = diagnosticoRepository;
         this.diagnosticoMapper = diagnosticoMapper;
         this.citaRepository = citaRepository;

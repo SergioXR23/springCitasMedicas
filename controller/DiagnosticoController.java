@@ -1,40 +1,39 @@
 package com.example.citasmedicasME.controller;
 
 import com.example.citasmedicasME.dto.DiagnosticoDTO;
-import com.example.citasmedicasME.service.DiagnosticoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.citasmedicasME.service.DiagnosticoServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/diagnosticos")
 public class DiagnosticoController {
 
-    private final DiagnosticoService diagnosticoService;
+    private final DiagnosticoServiceImpl diagnosticoServiceImpl;
 
-    @Autowired
-    public DiagnosticoController(DiagnosticoService diagnosticoService) {
-        this.diagnosticoService = diagnosticoService;
+    public DiagnosticoController(DiagnosticoServiceImpl diagnosticoServiceImpl) {
+        this.diagnosticoServiceImpl = diagnosticoServiceImpl;
     }
 
-    @PostMapping("/crear")
+
+    @PostMapping
     public ResponseEntity<DiagnosticoDTO> createDiagnostico(@RequestBody DiagnosticoDTO diagnosticoDTO) {
-        DiagnosticoDTO savedDiagnostico = diagnosticoService.saveDiagnostico(diagnosticoDTO);
+        DiagnosticoDTO savedDiagnostico = diagnosticoServiceImpl.saveDiagnostico(diagnosticoDTO);
         return new ResponseEntity<>(savedDiagnostico, HttpStatus.CREATED);
     }
 
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<List<DiagnosticoDTO>> getAllDiagnosticos() {
-        List<DiagnosticoDTO> diagnosticos = diagnosticoService.findAllDiagnosticos();
+        List<DiagnosticoDTO> diagnosticos = diagnosticoServiceImpl.findAllDiagnosticos();
         return ResponseEntity.ok(diagnosticos);
     }
 
-    @GetMapping("/buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getDiagnosticoById(@PathVariable Long id) {
-        DiagnosticoDTO diagnostico = diagnosticoService.findDiagnosticoById(id);
+        DiagnosticoDTO diagnostico = diagnosticoServiceImpl.findDiagnosticoById(id);
         if (diagnostico != null) {
             return ResponseEntity.ok(diagnostico);
         } else {
@@ -42,9 +41,9 @@ public class DiagnosticoController {
         }
     }
 
-    @PutMapping("/actualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateDiagnostico(@PathVariable Long id, @RequestBody DiagnosticoDTO diagnosticoDTO) {
-        DiagnosticoDTO updatedDiagnostico = diagnosticoService.updateDiagnostico(id, diagnosticoDTO);
+        DiagnosticoDTO updatedDiagnostico = diagnosticoServiceImpl.updateDiagnostico(id, diagnosticoDTO);
         if (updatedDiagnostico != null) {
             return ResponseEntity.ok(updatedDiagnostico);
         } else {
@@ -52,9 +51,9 @@ public class DiagnosticoController {
         }
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDiagnostico(@PathVariable Long id) {
-        if (diagnosticoService.deleteDiagnostico(id)) {
+        if (diagnosticoServiceImpl.deleteDiagnostico(id)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();

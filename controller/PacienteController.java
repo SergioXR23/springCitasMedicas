@@ -1,7 +1,7 @@
 package com.example.citasmedicasME.controller;
 
 import com.example.citasmedicasME.dto.PacienteDTO;
-import com.example.citasmedicasME.service.PacienteService;
+import com.example.citasmedicasME.service.PacienteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,46 +10,47 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/pacientes")
 public class PacienteController {
 
-    private final PacienteService pacienteService;
+    private final PacienteServiceImpl pacienteServiceImpl;
 
     @Autowired
-    public PacienteController(PacienteService pacienteService) {
-        this.pacienteService = pacienteService;
+    public PacienteController(PacienteServiceImpl pacienteServiceImpl) {
+        this.pacienteServiceImpl = pacienteServiceImpl;
     }
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<PacienteDTO> createPaciente(@RequestBody PacienteDTO pacienteDTO) {
-        PacienteDTO savedPaciente = pacienteService.savePaciente(pacienteDTO);
+        PacienteDTO savedPaciente = pacienteServiceImpl.savePaciente(pacienteDTO);
         return new ResponseEntity<>(savedPaciente, HttpStatus.CREATED);
     }
 
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<List<PacienteDTO>> getAllPacientes() {
-        List<PacienteDTO> pacientes = pacienteService.findAllPacientes();
+        List<PacienteDTO> pacientes = pacienteServiceImpl.findAllPacientes();
         return ResponseEntity.ok(pacientes);
     }
 
-    @GetMapping("/buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getPacienteById(@PathVariable Long id) {
-        Optional<PacienteDTO> pacienteDTO = pacienteService.getPacienteById(id);
+        Optional<PacienteDTO> pacienteDTO = pacienteServiceImpl.getPacienteById(id);
         return pacienteDTO.map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/actualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updatePaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteDTO) {
-        Optional<PacienteDTO> updatedPaciente = pacienteService.updatePaciente(id, pacienteDTO);
+        Optional<PacienteDTO> updatedPaciente = pacienteServiceImpl.updatePaciente(id, pacienteDTO);
         return updatedPaciente.map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePaciente(@PathVariable Long id) {
-        boolean deleted = pacienteService.deletePaciente(id);
+        boolean deleted = pacienteServiceImpl.deletePaciente(id);
         if (deleted) {
             return ResponseEntity.ok().build();
         }

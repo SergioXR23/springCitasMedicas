@@ -12,12 +12,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class PacienteService implements IPacienteService {
+public class PacienteServiceImpl implements IPacienteService {
 
     private final PacienteRepository pacienteRepository;
     private final PacienteMapper pacienteMapper;
 
-    public PacienteService(PacienteRepository pacienteRepository, PacienteMapper pacienteMapper) {
+    public PacienteServiceImpl(PacienteRepository pacienteRepository, PacienteMapper pacienteMapper) {
         this.pacienteRepository = pacienteRepository;
         this.pacienteMapper = pacienteMapper;
     }

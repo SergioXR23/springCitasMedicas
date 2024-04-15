@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UsuarioService implements IUsuarioService {
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
     // Constructor con inyección de dependencias
-    public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
     }
@@ -61,4 +61,14 @@ public class UsuarioService implements IUsuarioService {
         }
         usuarioRepository.deleteById(id);
     }
+
+    public UsuarioDTO login (String usuario, String contrasena) {
+         Usuario us =  usuarioRepository.findByUsuarioAndClave(usuario, contrasena);
+            if (0 == us.getId()) {
+                throw new RuntimeException("Usuario no encontrado");
+            }
+            return usuarioMapper.usuarioToUsuarioDTO(us);
+
+    }
+
 }

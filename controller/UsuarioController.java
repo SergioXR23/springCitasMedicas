@@ -1,7 +1,7 @@
 package com.example.citasmedicasME.controller;
 
 import com.example.citasmedicasME.dto.UsuarioDTO;
-import com.example.citasmedicasME.service.UsuarioService;
+import com.example.citasmedicasME.service.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,40 +14,47 @@ import java.util.List;
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
-    private final UsuarioService usuarioService;
+    private final UsuarioServiceImpl usuarioServiceImpl;
 
     @Autowired
-    public UsuarioController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
+    public UsuarioController(UsuarioServiceImpl usuarioServiceImpl) {
+        this.usuarioServiceImpl = usuarioServiceImpl;
     }
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<UsuarioDTO> createUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        UsuarioDTO savedUsuario = usuarioService.saveUsuario(usuarioDTO);
+        UsuarioDTO savedUsuario = usuarioServiceImpl.saveUsuario(usuarioDTO);
         return new ResponseEntity<>(savedUsuario, HttpStatus.CREATED);
     }
 
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
-        List<UsuarioDTO> usuarios = usuarioService.findAllUsuarios();
+        List<UsuarioDTO> usuarios = usuarioServiceImpl.findAllUsuarios();
         return ResponseEntity.ok(usuarios);
     }
 
-    @GetMapping("/buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
-        UsuarioDTO usuarioDTO = usuarioService.findUsuarioById(id);
+        UsuarioDTO usuarioDTO = usuarioServiceImpl.findUsuarioById(id);
         return ResponseEntity.ok(usuarioDTO);
     }
 
-    @PutMapping("/actualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
-        UsuarioDTO updatedUsuario = usuarioService.updateUsuario(id, usuarioDTO);
+        UsuarioDTO updatedUsuario = usuarioServiceImpl.updateUsuario(id, usuarioDTO);
         return ResponseEntity.ok(updatedUsuario);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
-        usuarioService.deleteUsuario(id);
+        usuarioServiceImpl.deleteUsuario(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioDTO> loginUsuario(@RequestParam String username, @RequestParam String password) {
+        UsuarioDTO usuarioDTO = usuarioServiceImpl.login(username, password);
+        return ResponseEntity.ok(usuarioDTO);
+
     }
 }

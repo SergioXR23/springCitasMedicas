@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CitaService implements ICitaService {
+public class CitaServiceImpl implements ICitaService {
 
     private final CitaRepository citaRepository;
     private final CitaMapper citaMapper;
@@ -26,7 +26,7 @@ public class CitaService implements ICitaService {
     private final PacienteRepository pacienteRepository;
     private final DiagnosticoRepository diagnosticoRepository;
 
-    public CitaService(CitaRepository citaRepository, MedicoRepository medicoRepository, PacienteRepository pacienteRepository,DiagnosticoRepository diagnosticoRepository, CitaMapper citaMapper) {
+    public CitaServiceImpl(CitaRepository citaRepository, MedicoRepository medicoRepository, PacienteRepository pacienteRepository, DiagnosticoRepository diagnosticoRepository, CitaMapper citaMapper) {
         this.citaRepository = citaRepository;
         this.citaMapper = citaMapper;
         this.medicoRepository = medicoRepository;

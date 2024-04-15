@@ -1,47 +1,47 @@
 package com.example.citasmedicasME.controller;
 
 import com.example.citasmedicasME.dto.MedicoDTO;
-import com.example.citasmedicasME.service.MedicoService;
+import com.example.citasmedicasME.service.MedicoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/medicos")
 public class MedicoController {
 
-    private final MedicoService medicoService;
+    private final MedicoServiceImpl medicoServiceImpl;
 
     @Autowired
-    public MedicoController(MedicoService medicoService) {
-        this.medicoService = medicoService;
+    public MedicoController(MedicoServiceImpl medicoServiceImpl) {
+        this.medicoServiceImpl = medicoServiceImpl;
     }
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<MedicoDTO> createMedico(@RequestBody MedicoDTO medicoDTO) {
-        MedicoDTO savedMedico = medicoService.saveMedico(medicoDTO);
+        MedicoDTO savedMedico = medicoServiceImpl.saveMedico(medicoDTO);
         return new ResponseEntity<>(savedMedico, HttpStatus.CREATED);
     }
 
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<?> getAllMedicos() {
-        return ResponseEntity.ok(medicoService.findAll());
+        return ResponseEntity.ok(medicoServiceImpl.findAll());
     }
 
-    @GetMapping("/buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getMedicoById(@PathVariable Long id) {
-        return ResponseEntity.ok(medicoService.findById(id));
+        return ResponseEntity.ok(medicoServiceImpl.findById(id));
     }
 
-    @PutMapping("/actualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateMedico(@PathVariable Long id, @RequestBody MedicoDTO medicoDTO) {
-        return ResponseEntity.ok(medicoService.save(medicoDTO));
+        return ResponseEntity.ok(medicoServiceImpl.save(medicoDTO));
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMedico(@PathVariable Long id) {
-        medicoService.delete(id);
+        medicoServiceImpl.delete(id);
         return ResponseEntity.ok().build();
     }
 
