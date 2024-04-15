@@ -21,7 +21,7 @@ public class DiagnosticoController {
 
     @PostMapping
     public ResponseEntity<DiagnosticoDTO> createDiagnostico(@RequestBody DiagnosticoDTO diagnosticoDTO) {
-        DiagnosticoDTO savedDiagnostico = diagnosticoServiceImpl.saveDiagnostico(diagnosticoDTO);
+        DiagnosticoDTO savedDiagnostico = diagnosticoServiceImpl.save(diagnosticoDTO);
         return new ResponseEntity<>(savedDiagnostico, HttpStatus.CREATED);
     }
 
@@ -33,7 +33,7 @@ public class DiagnosticoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDiagnosticoById(@PathVariable Long id) {
-        DiagnosticoDTO diagnostico = diagnosticoServiceImpl.findDiagnosticoById(id);
+        DiagnosticoDTO diagnostico = diagnosticoServiceImpl.findById(id);
         if (diagnostico != null) {
             return ResponseEntity.ok(diagnostico);
         } else {

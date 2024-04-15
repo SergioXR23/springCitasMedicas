@@ -12,7 +12,7 @@ public interface ICitaService {
 
     CitaDTO updateCita(Long id, CitaDTO citaDTO);
 
-    CitaDTO findCitaById(Long id);
+    CitaDTO findById(Long id);
 
     List<CitaDTO> findAllCitas();
 }

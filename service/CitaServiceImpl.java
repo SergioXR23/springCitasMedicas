@@ -1,90 +1,96 @@
 package com.example.citasmedicasME.service;
 
 import com.example.citasmedicasME.dto.CitaDTO;
+import com.example.citasmedicasME.dto.DiagnosticoDTO;
+import com.example.citasmedicasME.dto.MedicoDTO;
+import com.example.citasmedicasME.dto.PacienteDTO;
 import com.example.citasmedicasME.mapper.CitaMapper;
+import com.example.citasmedicasME.mapper.DiagnosticoMapper;
+import com.example.citasmedicasME.mapper.MedicoMapper;
+import com.example.citasmedicasME.mapper.PacienteMapper;
 import com.example.citasmedicasME.model.Cita;
 import com.example.citasmedicasME.model.Diagnostico;
 import com.example.citasmedicasME.model.Medico;
 import com.example.citasmedicasME.model.Paciente;
 import com.example.citasmedicasME.repository.CitaRepository;
-import com.example.citasmedicasME.repository.DiagnosticoRepository;
-import com.example.citasmedicasME.repository.MedicoRepository;
-import com.example.citasmedicasME.repository.PacienteRepository;
 import com.example.citasmedicasME.service.interfaces.ICitaService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CitaServiceImpl implements ICitaService {
 
-    private final CitaRepository citaRepository;
-    private final CitaMapper citaMapper;
-    private final MedicoRepository medicoRepository;
-    private final PacienteRepository pacienteRepository;
-    private final DiagnosticoRepository diagnosticoRepository;
 
-    public CitaServiceImpl(CitaRepository citaRepository, MedicoRepository medicoRepository, PacienteRepository pacienteRepository, DiagnosticoRepository diagnosticoRepository, CitaMapper citaMapper) {
-        this.citaRepository = citaRepository;
-        this.citaMapper = citaMapper;
-        this.medicoRepository = medicoRepository;
-        this.pacienteRepository = pacienteRepository;
-        this.diagnosticoRepository = diagnosticoRepository;
-    }
+    @Autowired
+    private CitaRepository citaRepository;
+
+    @Autowired
+    private MedicoServiceImpl medicoService;
+
+    @Autowired
+    private PacienteServiceImpl pacienteService;
+
+    @Lazy
+    @Autowired
+    private DiagnosticoServiceImpl diagnosticoServices;
+
+    @Autowired
+    private CitaMapper citaMapper;
+
+    @Autowired
+    private MedicoMapper medicoMapper;
+
+    @Autowired
+    private PacienteMapper pacienteMapper;
+
+    @Autowired
+    private DiagnosticoMapper diagnosticoMapper;
 
     public CitaDTO saveCita(CitaDTO citaDTO) {
         Cita cita = new Cita();
-
-        Medico medico = medicoRepository.findById(citaDTO.getIdMedico())
-                .orElseThrow(() -> new RuntimeException("Médico no encontrado con el ID: " + citaDTO.getIdMedico()));
+        MedicoDTO medicoDTO = medicoService.findById(citaDTO.getIdMedico());
+        Medico medico = medicoMapper.medicoDTOToMedico(medicoDTO);
         cita.setMedico(medico);
-
-        Paciente paciente = pacienteRepository.findById(citaDTO.getIdPaciente())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con el ID: " + citaDTO.getIdPaciente()));
+        PacienteDTO pacienteDTO = pacienteService.findById(citaDTO.getIdPaciente());
+        Paciente paciente = pacienteMapper.pacienteDTOToPaciente(pacienteDTO);
         cita.setPaciente(paciente);
-
         cita.setFechaHora(citaDTO.getFechaHora());
         cita.setMotivoCita(citaDTO.getMotivoCita());
-
-        Cita savedCita = citaRepository.save(cita);
-
-        return citaMapper.citaToCitaDTO(savedCita);
+        return citaMapper.citaToCitaDTO(citaRepository.save(cita));
     }
 
     public boolean deleteCita(Long id) {
-        if (citaRepository.existsById(id)) {
-            citaRepository.deleteById(id);
-            return true;
+        if (!citaRepository.existsById(id)) {
+            throw new EntityNotFoundException("Cita no encontrada con el ID: " + id);
         }
-        return false;
+        citaRepository.deleteById(id);
+        return true;
     }
 
     public CitaDTO updateCita(Long id, CitaDTO citaDTO) {
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cita no encontrada con el ID: " + id));
-
-        // Mapea los cambios en la cita desde el DTO
         cita.setFechaHora(citaDTO.getFechaHora());
         cita.setMotivoCita(citaDTO.getMotivoCita());
-
         if (citaDTO.getIdDiagnostico() != null) {
-            Diagnostico diagnostico = diagnosticoRepository.findById(citaDTO.getIdDiagnostico())
-                    .orElseThrow(() -> new EntityNotFoundException("Diagnostico no encontrado con el ID: " + citaDTO.getIdDiagnostico()));
-
-            diagnostico = diagnosticoRepository.save(diagnostico);
-
+            DiagnosticoDTO diagnosticoDTO = diagnosticoServices.findById(citaDTO.getIdDiagnostico());
+            Diagnostico diagnostico = diagnosticoMapper.diagnosticoDTOToDiagnostico(diagnosticoDTO);
             cita.setDiagnostico(diagnostico);
         }
-
-        Cita updatedCita = citaRepository.save(cita);
-        return citaMapper.citaToCitaDTO(updatedCita);
+        return citaMapper.citaToCitaDTO(citaRepository.save(cita));
     }
-    public CitaDTO findCitaById(Long id) {
+
+    public CitaDTO findById(Long id) {
         return citaRepository.findById(id)
                 .map(citaMapper::citaToCitaDTO)
-                .orElse(null);
+                .orElseThrow(() -> new EntityNotFoundException("Cita no encontrada con el ID: " + id));
     }
 
     public List<CitaDTO> findAllCitas() {
@@ -92,5 +98,4 @@ public class CitaServiceImpl implements ICitaService {
                 .map(citaMapper::citaToCitaDTO)
                 .collect(Collectors.toList());
     }
-
 }

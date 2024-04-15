@@ -1,5 +1,6 @@
 package com.example.citasmedicasME.model;
 
+import com.example.citasmedicasME.dto.UsuarioDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,4 +35,10 @@ public class Usuario {
     private String clave;
 
 
+    public void updateWithDTO(UsuarioDTO usuario) {
+        this.nombre = usuario.getNombre();
+        this.apellidos = usuario.getApellidos();
+        this.usuario = usuario.getUsuario();
+        this.clave = usuario.getClave();
+    }
 }

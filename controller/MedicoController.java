@@ -20,7 +20,7 @@ public class MedicoController {
 
     @PostMapping
     public ResponseEntity<MedicoDTO> createMedico(@RequestBody MedicoDTO medicoDTO) {
-        MedicoDTO savedMedico = medicoServiceImpl.saveMedico(medicoDTO);
+        MedicoDTO savedMedico = medicoServiceImpl.save(medicoDTO);
         return new ResponseEntity<>(savedMedico, HttpStatus.CREATED);
     }
 

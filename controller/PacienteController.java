@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -36,16 +35,14 @@ public class PacienteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPacienteById(@PathVariable Long id) {
-        Optional<PacienteDTO> pacienteDTO = pacienteServiceImpl.getPacienteById(id);
-        return pacienteDTO.map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        PacienteDTO pacienteDTO = pacienteServiceImpl.findById(id);
+        return ResponseEntity.ok(pacienteDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteDTO) {
-        Optional<PacienteDTO> updatedPaciente = pacienteServiceImpl.updatePaciente(id, pacienteDTO);
-        return updatedPaciente.map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        PacienteDTO updatedPaciente = pacienteServiceImpl.updatePaciente(id, pacienteDTO);
+        return ResponseEntity.ok(updatedPaciente);
     }
 
     @DeleteMapping("/{id}")
