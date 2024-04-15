@@ -6,17 +6,19 @@ import com.example.citasmedicasME.model.Usuario;
 import com.example.citasmedicasME.repository.UsuarioRepository;
 import com.example.citasmedicasME.service.interfaces.IUsuarioService;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
-    // Constructor con inyección de dependencias
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
@@ -25,6 +27,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public UsuarioDTO saveUsuario(UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioMapper.usuarioDTOToUsuario(usuarioDTO);
+        if (usuarioRepository.findByUsuario(usuario.getUsuario()) != null) {
+            throw new EntityNotFoundException("El nombre de usuario ya existe");
+        }
         Usuario savedUsuario = usuarioRepository.save(usuario);
         return usuarioMapper.usuarioToUsuarioDTO(savedUsuario);
     }
@@ -37,19 +42,21 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioDTO findUsuarioById(Long id) {
+    public UsuarioDTO findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")); // Considera usar una excepción más específica
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
         return usuarioMapper.usuarioToUsuarioDTO(usuario);
     }
 
     @Override
     public UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO) {
-        if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + id));
+
+        if (usuarioRepository.findByUsuario(usuarioDTO.getUsuario()) != null) {
+            throw new EntityNotFoundException("El nombre de usuario ya existe");
         }
-        Usuario usuario = usuarioMapper.usuarioDTOToUsuario(usuarioDTO);
-        usuario.setId(id); // Asegúrate de que el ID esté seteado para la actualización
+        usuario.updateWithDTO(usuarioDTO); // Asumimos un método para actualizar los datos específicos
         Usuario updatedUsuario = usuarioRepository.save(usuario);
         return usuarioMapper.usuarioToUsuarioDTO(updatedUsuario);
     }
@@ -57,18 +64,17 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public void deleteUsuario(Long id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new EntityNotFoundException("Usuario no encontrado con ID: " + id);
         }
         usuarioRepository.deleteById(id);
     }
 
-    public UsuarioDTO login (String usuario, String contrasena) {
-         Usuario us =  usuarioRepository.findByUsuarioAndClave(usuario, contrasena);
-            if (0 == us.getId()) {
-                throw new RuntimeException("Usuario no encontrado");
-            }
-            return usuarioMapper.usuarioToUsuarioDTO(us);
-
+    public UsuarioDTO login(String usuario, String contrasena) {
+        Usuario us = usuarioRepository.findByUsuarioAndClave(usuario, contrasena);
+        if (us == null) {
+            throw new EntityNotFoundException("Credenciales inválidas para el usuario: " + usuario);
+        }
+        return usuarioMapper.usuarioToUsuarioDTO(us);
     }
 
 }

@@ -26,5 +26,6 @@ public class CitaDTO {
     private Long idDiagnostico;
     @NotNull(message = "El médico no puede ser nulo")
     private Long idMedico;
+
 }
 

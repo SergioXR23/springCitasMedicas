@@ -10,7 +10,7 @@ public interface IUsuarioService {
 
     List<UsuarioDTO> findAllUsuarios();
 
-    UsuarioDTO findUsuarioById(Long id);
+    UsuarioDTO findById(Long id);
 
     UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO);
 

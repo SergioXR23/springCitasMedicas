@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface IDiagnosticoService {
 
-    DiagnosticoDTO saveDiagnostico(DiagnosticoDTO diagnosticoDTO);
+    DiagnosticoDTO save(DiagnosticoDTO diagnosticoDTO);
 
     boolean deleteDiagnostico(Long id);
 
     DiagnosticoDTO updateDiagnostico(Long id, DiagnosticoDTO diagnosticoDTO);
 
-    DiagnosticoDTO findDiagnosticoById(Long id);
+    DiagnosticoDTO findById(Long id);
 
     List<DiagnosticoDTO> findAllDiagnosticos();
 }

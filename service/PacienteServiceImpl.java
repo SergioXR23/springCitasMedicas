@@ -5,13 +5,15 @@ import com.example.citasmedicasME.mapper.PacienteMapper;
 import com.example.citasmedicasME.model.Paciente;
 import com.example.citasmedicasME.repository.PacienteRepository;
 import com.example.citasmedicasME.service.interfaces.IPacienteService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PacienteServiceImpl implements IPacienteService {
 
     private final PacienteRepository pacienteRepository;
@@ -22,34 +24,37 @@ public class PacienteServiceImpl implements IPacienteService {
         this.pacienteMapper = pacienteMapper;
     }
 
-
-    public Optional<PacienteDTO> getPacienteById(Long id) {
+    public PacienteDTO findById(Long id) {
         return pacienteRepository.findById(id)
-                .map(pacienteMapper::pacienteToPacienteDTO);
+                .map(pacienteMapper::pacienteToPacienteDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
     }
 
     public PacienteDTO savePaciente(PacienteDTO pacienteDTO) {
         Paciente paciente = pacienteMapper.pacienteDTOToPaciente(pacienteDTO);
+        if(pacienteRepository.findByNombre(paciente.getNombre()) != null) {
+            throw new EntityNotFoundException("El paciente ya existe");
+        }
         paciente = pacienteRepository.save(paciente);
         return pacienteMapper.pacienteToPacienteDTO(paciente);
     }
 
     public boolean deletePaciente(Long id) {
-        if (pacienteRepository.existsById(id)) {
-            pacienteRepository.deleteById(id);
-            return true;
+        if (!pacienteRepository.existsById(id)) {
+            throw new EntityNotFoundException("Paciente no encontrado con ID: " + id);
         }
-        return false;
+        pacienteRepository.deleteById(id);
+        return true;
     }
 
-    public Optional<PacienteDTO> updatePaciente(Long id, PacienteDTO pacienteDTO) {
-        if (pacienteRepository.existsById(id)) {
-            Paciente paciente = pacienteMapper.pacienteDTOToPaciente(pacienteDTO);
-            paciente.setId(id); // Asegura que se actualice el paciente correcto
-            paciente = pacienteRepository.save(paciente);
-            return Optional.of(pacienteMapper.pacienteToPacienteDTO(paciente));
+    public PacienteDTO updatePaciente(Long id, PacienteDTO pacienteDTO) {
+        if (!pacienteRepository.existsById(id)) {
+            throw new EntityNotFoundException("Paciente no encontrado con ID: " + id);
         }
-        return Optional.empty();
+        Paciente paciente = pacienteMapper.pacienteDTOToPaciente(pacienteDTO);
+        paciente.setId(id); // Asegura que se actualice el paciente correcto
+        paciente = pacienteRepository.save(paciente);
+        return pacienteMapper.pacienteToPacienteDTO(paciente);
     }
 
     public List<PacienteDTO> findAllPacientes() {

@@ -32,7 +32,7 @@ public class CitaController {
     // Usa @GetMapping para buscar una cita por ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getCitaById(@PathVariable Long id) {
-        return ResponseEntity.ok(citaServiceImpl.findCitaById(id));
+        return ResponseEntity.ok(citaServiceImpl.findById(id));
     }
 
     @PutMapping("/{id}")
